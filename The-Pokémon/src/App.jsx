@@ -1,35 +1,72 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useState } from "react";
+import PokeCard from "./components/PokeCard";
+import "./App.css";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [count, setCount] = useState(5);
+  const [category, setCategory] = useState("fire");
+  const [pokemonUrls, setPokemonUrls] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const handleFetch = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setPokemonUrls([]);
+
+    try {
+      const res = await fetch(`https://pokeapi.co/api/v2/type/${category}`);
+      const data = await res.json();
+
+      const selected = data.pokemon
+        .sort(() => 0.5 - Math.random())
+        .slice(0, count)
+        .map((p) => p.pokemon.url);
+
+      setPokemonUrls(selected);
+    } catch (err) {
+      console.error("Failed to fetch Pokémon:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className="App">
+      <h1>Pokémon Card Viewer</h1>
+      <form onSubmit={handleFetch}>
+        <input
+          type="number"
+          value={count}
+          onChange={(e) => setCount(e.target.value)}
+          min="1"
+          max="100"
+          required
+        />
+        <select value={category} onChange={(e) => setCategory(e.target.value)}>
+          <option value="fire">Fire</option>
+          <option value="water">Water</option>
+          <option value="grass">Grass</option>
+          <option value="electric">Electric</option>
+          <option value="psychic">Psychic</option>
+          <option value="flying">Flying</option>
+          <option value="bug">Bug</option>
+          <option value="fighting">Fighting</option>
+        </select>
+        <button type="submit">Get Pokémon</button>
+      </form>
+
+      <hr/>
+      <hr/>
+
+      {loading && <p>Loading...</p>}
+
+      <div className="card-container">
+        {pokemonUrls.map((url, index) => (
+          <PokeCard key={index} url={url} />
+        ))}
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    </div>
+  );
 }
 
-export default App
+export default App;
