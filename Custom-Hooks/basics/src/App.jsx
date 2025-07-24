@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './App.css';
 import UseFetch2 from './UseFetch';
 import { usePrev } from './UsePrev';
 import UseIsOnline from './UseIsOnline';
+import UseDebounce, { UseDebounce2 } from './UseDebounce';
 
 function App() {
 
@@ -41,13 +42,46 @@ function App() {
     // )
 
   // using UseIsOnline
-      const isOnline = UseIsOnline();
+    //   const isOnline = UseIsOnline();
+
+    // return (
+    //   <div>
+    //     {isOnline ? "🟢 You are Online" : "🔴 You are Offline"}
+    //   </div>
+    // );
+
+    // using UseDebounce...
+    function expensiveOperation() {
+      // some expensive operation
+      console.log("Some Expensive Operation");
+    }
+    const debounceFn = UseDebounce(expensiveOperation);
 
     return (
       <div>
-        {isOnline ? "🟢 You are Online" : "🔴 You are Offline"}
+        <input type='text' onChange={debounceFn}/>
       </div>
-    );
+    )
+
+    // using UseDebounce2...
+    const [inputVal, setInputVal] = useState("");
+
+    function change(e) {
+      setInputVal(e.target.value);
+    }
+
+    const debouncedValue = UseDebounce2(inputVal, 200);
+
+    useEffect(() => {
+      //Some expensive operation
+      console.log("Exp. Opn.")
+    }, [debouncedValue]);
+
+    return (
+      <div>
+        <input id='input' type='text' onChange={change}/>
+      </div>
+    )
 }
 
 
