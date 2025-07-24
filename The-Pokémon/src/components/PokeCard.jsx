@@ -25,7 +25,7 @@ const PokeCard = ({ url }) => {
     <div className="card">
       <h3>{pokemon.name}</h3>
       <hr />
-      <img src={pokemon.sprites.front_default} alt={pokemon.name}/>
+      <img src={pokemon.sprites.front_default} alt={pokemon.name} />
       <p>Type: {pokemon.types.map((t) => t.type.name).join(", ")}</p>
     </div>
   );
